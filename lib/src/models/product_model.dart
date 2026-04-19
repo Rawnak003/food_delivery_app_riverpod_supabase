@@ -80,7 +80,7 @@ var desc =
 // if you have required this sample data then join your discord server i will attach all the sampel file there,
 class FoodModel {
   final String imageCard;
-  final String id; // Add this
+  final int id;
   final String imageDetail;
   final String name;
   final double price;

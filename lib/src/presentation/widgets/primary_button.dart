@@ -12,12 +12,13 @@ class PrimaryButton extends StatelessWidget {
     this.iconPath,
     this.titleColor,
     this.isRounded,
-    this.isOutlined,
+    this.isOutlined, this.borderColor,
   });
 
   final VoidCallback onTap;
   final String buttonTitle;
   final Color? buttonColor;
+  final Color? borderColor;
   final String? iconPath;
   final Color? titleColor;
   final bool? isRounded;
@@ -42,7 +43,7 @@ class PrimaryButton extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           color: isOutlined ?? false ? AppColors.background : buttonColor ?? AppColors.primary,
-          border: Border.all(color: buttonColor ?? AppColors.primary, width: 1.w),
+          border: Border.all(color: borderColor ?? buttonColor ?? AppColors.primary, width: 1.w),
           borderRadius: BorderRadius.circular(borderRadius),
         ),
         child: Row(

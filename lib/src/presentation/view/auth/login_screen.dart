@@ -53,7 +53,7 @@ class _SignupScreenState extends State<LoginScreen> {
       AppToast.showToast(errorMessage);
     } else {
       AppToast.showToast("Logged in successfully", backgroundColor: Colors.green);
-      Navigator.pushNamedAndRemoveUntil(context, RouteNames.homeScreen, (predicate) => false);
+      Navigator.pushNamedAndRemoveUntil(context, RouteNames.parentScreen, (predicate) => false);
     }
 
     setState(() {

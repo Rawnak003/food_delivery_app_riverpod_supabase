@@ -57,142 +57,162 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: Image.asset("assets/leaf.png", width: 80.w),
           ),
           Positioned(
-            top: 370.h,
+            top: 340.h,
             right: 20.w,
             child: Image.asset("assets/chili.png", width: 80.w),
           ),
           Positioned(
-            top: 300.h,
+            top: 290.h,
             left: 0.w,
             child: Image.asset("assets/ginger.png", width: 90.w),
           ),
 
           Align(
             alignment: Alignment.bottomCenter,
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 40.h),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    height: 180.h,
-                    child: PageView.builder(
-                      controller: _pageController,
-                      itemCount: data.length,
-                      onPageChanged: _onPageChanged,
-                      itemBuilder: (context, index) {
-                        final item = data[index];
+            child: ClipPath(
+              clipper: CustomClip(),
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 40.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      height: 180.h,
+                      child: PageView.builder(
+                        controller: _pageController,
+                        itemCount: data.length,
+                        onPageChanged: _onPageChanged,
+                        itemBuilder: (context, index) {
+                          final item = data[index];
 
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            RichText(
-                              textAlign: TextAlign.center,
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: item['title1'],
-                                    style: textTheme.headlineLarge(
-                                      fontWeight: FontWeight.w600,
-                                      overrideColor: Colors.black,
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              RichText(
+                                textAlign: TextAlign.center,
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: item['title1'],
+                                      style: textTheme.headlineLarge(
+                                        fontWeight: FontWeight.w600,
+                                        overrideColor: Colors.black,
+                                      ),
                                     ),
-                                  ),
-                                  TextSpan(
-                                    text: item['title2'],
-                                    style: textTheme.headlineLarge(
-                                      fontWeight: FontWeight.bold,
-                                      overrideColor: AppColors.redColor,
+                                    TextSpan(
+                                      text: item['title2'],
+                                      style: textTheme.headlineLarge(
+                                        fontWeight: FontWeight.bold,
+                                        overrideColor: AppColors.redColor,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 20.h),
-                            Text(
-                              item['description']!,
-                              textAlign: TextAlign.center,
-                              style: textTheme.bodyLarge(
-                                overrideColor: Colors.grey.shade800,
-                                fontWeight: FontWeight.w500,
+                              SizedBox(height: 20.h),
+                              Text(
+                                item['description']!,
+                                textAlign: TextAlign.center,
+                                style: textTheme.bodyLarge(
+                                  overrideColor: Colors.grey.shade800,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                          ],
-                        );
-                      },
+                            ],
+                          );
+                        },
+                      ),
                     ),
-                  ),
 
-                  SizedBox(height: 20.h),
+                    SizedBox(height: 20.h),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      data.length,
-                      (index) => AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        margin: EdgeInsets.symmetric(horizontal: 4.w),
-                        width: currentIndex == index ? 20.w : 8.w,
-                        height: 8.h,
-                        decoration: BoxDecoration(
-                          color: currentIndex == index
-                              ? AppColors.redColor
-                              : Colors.grey.shade300,
-                          borderRadius: BorderRadius.circular(20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        data.length,
+                        (index) => AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          margin: EdgeInsets.symmetric(horizontal: 4.w),
+                          width: currentIndex == index ? 20.w : 8.w,
+                          height: 8.h,
+                          decoration: BoxDecoration(
+                            color: currentIndex == index
+                                ? AppColors.redColor
+                                : Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
-                  SizedBox(height: 30.h),
+                    SizedBox(height: 30.h),
 
-                  PrimaryButton(
-                    onTap: () async {
-                      if (currentIndex == data.length - 1) {
-                        // TODO: mark onboarding done
-                        await SharedPreferenceData.setOnboardingSeen();
-                        Navigator.pushNamedAndRemoveUntil(context, RouteNames.loginScreen, (predicate) => false);
-                      } else {
-                        _pageController.nextPage(
+                    PrimaryButton(
+                      onTap: () async {
+                        if (currentIndex == data.length - 1) {
+                          await SharedPreferenceData.setOnboardingSeen();
+                          Navigator.pushNamedAndRemoveUntil(context, RouteNames.loginScreen, (predicate) => false);
+                        } else {
+                          _pageController.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
+                      },
+                      buttonTitle: currentIndex == data.length - 1
+                          ? "Get Started"
+                          : "Next",
+                      buttonColor: AppColors.redColor,
+                    ),
+
+                    SizedBox(height: 10.h),
+
+                    TextButton(
+                      onPressed: () {
+                        _pageController.animateToPage(
+                          data.length - 1,
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
                         );
-                      }
-                    },
-                    buttonTitle: currentIndex == data.length - 1
-                        ? "Get Started"
-                        : "Next",
-                    buttonColor: AppColors.redColor,
-                  ),
-
-                  SizedBox(height: 10.h),
-
-                  TextButton(
-                    onPressed: () {
-                      _pageController.animateToPage(
-                        data.length - 1,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    },
-                    child: Text(
-                      "Skip",
-                      style: textTheme.bodyMedium(
-                        overrideColor: Colors.grey,
-                        fontWeight: FontWeight.bold,
+                      },
+                      child: Text(
+                        "Skip",
+                        style: textTheme.bodyMedium(
+                          overrideColor: Colors.grey,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
         ],
       ),
     );
+  }
+}
+
+class CustomClip extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.lineTo(0, 45);
+    path.lineTo(0, size.height);
+    path.lineTo(size.width, size.height);
+    path.lineTo(size.width, 45);
+    path.quadraticBezierTo(size.width / 2, -45, 0, 45);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
   }
 }

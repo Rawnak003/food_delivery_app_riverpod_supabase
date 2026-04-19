@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery_supabase_riverpod/src/presentation/view/home/home_screen.dart';
 import 'package:food_delivery_supabase_riverpod/src/presentation/view/onboarding/onboarding_screen.dart';
 import 'package:food_delivery_supabase_riverpod/src/presentation/view/onboarding/splash_screen.dart';
+import 'package:food_delivery_supabase_riverpod/src/presentation/view/parent/parent_screen.dart';
 import '../../presentation/view/auth/login_screen.dart';
 import '../../presentation/view/auth/signup_screen.dart';
 import 'route_name.dart';
@@ -19,8 +20,8 @@ class AppRoutes {
         return _buildRoute(const LoginScreen());
       case RouteNames.signUpScreen:
         return _buildRoute(const SignupScreen());
-      case RouteNames.homeScreen:
-        return _buildRoute(const HomeScreen());
+      case RouteNames.parentScreen:
+        return _buildRoute(const ParentScreen());
 
       default:
         return null;

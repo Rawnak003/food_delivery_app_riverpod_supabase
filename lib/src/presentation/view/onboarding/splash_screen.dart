@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food_delivery_supabase_riverpod/src/core/constants/app_colors.dart';
+import 'package:food_delivery_supabase_riverpod/src/presentation/view/parent/parent_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../data/shared_pref_data.dart';
@@ -70,7 +71,7 @@ class _SplashScreenState extends State<SplashScreen>
     final session = supabase.auth.currentSession;
 
     if (session != null) {
-      _goTo(const HomeScreen());
+      _goTo(const ParentScreen());
       return;
     }
 
@@ -112,8 +113,8 @@ class _SplashScreenState extends State<SplashScreen>
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color(0xFF6A11CB),
-              Color(0xFF2575FC),
+              Colors.deepPurple,
+              Colors.blue,
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -123,7 +124,6 @@ class _SplashScreenState extends State<SplashScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // 🔵 Animated Logo
               ScaleTransition(
                 scale: _scaleAnimation,
                 child: FadeTransition(
@@ -131,6 +131,7 @@ class _SplashScreenState extends State<SplashScreen>
                   child: Container(
                     height: 120.h,
                     width: 120.h,
+                    padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(24.r),
@@ -142,10 +143,9 @@ class _SplashScreenState extends State<SplashScreen>
                         )
                       ],
                     ),
-                    child: Icon(
-                      Icons.fastfood_rounded,
-                      size: 60.sp,
-                      color: AppColors.primary,
+                    child: Image.asset(
+                      "assets/burger.png",
+                      height: 60.sp,
                     ),
                   ),
                 ),
@@ -153,7 +153,6 @@ class _SplashScreenState extends State<SplashScreen>
 
               SizedBox(height: 25.h),
 
-              // 🟣 Animated Title
               FadeTransition(
                 opacity: _textAnimation,
                 child: Text(
@@ -182,12 +181,11 @@ class _SplashScreenState extends State<SplashScreen>
 
               SizedBox(height: 40.h),
 
-              // 🔄 Loader (soft)
               FadeTransition(
                 opacity: _fadeAnimation,
-                child: const CircularProgressIndicator(
+                child: CircularProgressIndicator(
                   color: Colors.white,
-                  strokeWidth: 2,
+                  strokeWidth: 4.w,
                 ),
               ),
             ],
