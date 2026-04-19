@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food_delivery_supabase_riverpod/src/core/utils/validators.dart';
 
@@ -8,24 +9,21 @@ import '../../../core/route/route_name.dart';
 import '../../../core/services/auth/auth_service.dart';
 import '../../../core/theme/app_text_style.dart';
 import '../../../core/utils/app_toast.dart';
+import '../../../view_models/riverpods/login__provider.dart';
 import '../../widgets/app_loader.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/primary_button.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final AuthService _authService = AuthService();
-
-  bool isPasswordObscure = true;
-  bool isLoading = false;
 
   @override
   void dispose() {
@@ -34,42 +32,11 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void login() async {
-    String email = _emailController.text.trim();
-    String password = _passwordController.text.trim();
-
-    if (email.isEmpty || password.isEmpty) {
-      AppToast.showToast("Email and password are required");
-      return;
-    }
-
-    setState(() {
-      isLoading = true;
-    });
-
-    final String? errorMessage = await _authService.login(email: email, password: password);
-
-    if (errorMessage != null) {
-      AppToast.showToast(errorMessage);
-    } else {
-      AppToast.showToast("Logged in successfully", backgroundColor: Colors.green);
-      Navigator.pushNamedAndRemoveUntil(context, RouteNames.parentScreen, (predicate) => false);
-    }
-
-    setState(() {
-      isLoading = false;
-    });
-  }
-
-  void togglePassword() {
-    setState(() {
-      isPasswordObscure = !isPasswordObscure;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final textTheme = AppTextStyle.auto(context);
+    final provider = ref.watch(loginProvider);
+    final notifier = ref.read(loginProvider.notifier);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -103,16 +70,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   label: 'Password',
                   controller: _passwordController,
                   action: TextInputAction.done,
-                  isObscure: isPasswordObscure,
+                  isObscure: provider.isPasswordObscure,
                   prefixIconPath: "assets/icon/lock.svg",
-                  suffixIconPath: isPasswordObscure
+                  suffixIconPath: provider.isPasswordObscure
                       ? "assets/icon/eye.svg"
                       : "assets/icon/eye-slash.svg",
-                  suffixIconOnTap: togglePassword,
+                  suffixIconOnTap: notifier.togglePassword,
                   validator: (value) => Validators.passwordValidator(value),
                 ),
-                SizedBox(height: 12.h,),
-            
+                SizedBox(height: 12.h),
+
                 Align(
                   alignment: Alignment.centerRight,
                   child: GestureDetector(
@@ -130,12 +97,45 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 SizedBox(height: 36.h),
-                isLoading ? AppLoader.wave() : PrimaryButton(onTap: login, buttonTitle: "Login"),
-                SizedBox(height: 24.h,),
+                provider.isLoading
+                    ? AppLoader.wave()
+                    : PrimaryButton(
+                        onTap: () async {
+                          String email = _emailController.text.trim();
+                          String password = _passwordController.text.trim();
+
+                          if (email.isEmpty || password.isEmpty) {
+                            AppToast.showToast(
+                              "Email and password are required",
+                            );
+                            return;
+                          }
+
+                          final String? errorMessage = await notifier.login(
+                            email: email,
+                            password: password,
+                          );
+
+                          if (errorMessage != null) {
+                            AppToast.showToast(errorMessage);
+                          } else {
+                            AppToast.showToast(
+                              "Logged in successfully",
+                              backgroundColor: Colors.green,
+                            );
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              RouteNames.parentScreen,
+                              (predicate) => false,
+                            );
+                          }
+                        },
+                        buttonTitle: "Login",
+                      ),
+                SizedBox(height: 24.h),
                 RichText(
                   text: TextSpan(
-                    text:
-                    'Don\'t have an account? ',
+                    text: 'Don\'t have an account? ',
                     style: textTheme.bodySmall(),
                     children: [
                       TextSpan(
@@ -146,7 +146,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            Navigator.pushNamed(context, RouteNames.signUpScreen);
+                            Navigator.pushNamed(
+                              context,
+                              RouteNames.signUpScreen,
+                            );
                           },
                       ),
                     ],

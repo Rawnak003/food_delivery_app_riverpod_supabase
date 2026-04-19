@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../repositories/favorite_repository.dart';
+import '../../repositories/favorite_repository.dart';
 
 final favouriteRepoProvider = Provider<FavoriteRepository>((ref) {
   final sb = Supabase.instance.client;

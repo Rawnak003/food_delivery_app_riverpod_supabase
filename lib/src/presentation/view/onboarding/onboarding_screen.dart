@@ -8,7 +8,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/route/route_name.dart';
 import '../../../core/theme/app_text_style.dart';
 import '../../../models/on_bording_model.dart';
-import '../../../view_models/onboarding_provider.dart';
+import '../../../view_models/riverpods/onboarding_provider.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -19,10 +19,6 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final PageController _pageController = PageController();
-
-  void _onPageChanged(int index) {
-    ref.read(onboardingProvider.notifier).setPage(index);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +83,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       child: PageView.builder(
                         controller: _pageController,
                         itemCount: data.length,
-                        onPageChanged: _onPageChanged,
+                        onPageChanged: (index) => notifier.setPage(index),
                         itemBuilder: (context, index) {
                           final item = data[index];
 

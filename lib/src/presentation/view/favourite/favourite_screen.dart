@@ -7,7 +7,7 @@ import 'package:food_delivery_supabase_riverpod/src/presentation/view/home/widge
 import 'package:food_delivery_supabase_riverpod/src/presentation/widgets/app_loader.dart';
 
 import '../../../core/theme/app_text_style.dart';
-import '../../../view_models/favourite_provider.dart';
+import '../../../view_models/riverpods/favourite_provider.dart';
 
 class FavouriteScreen extends ConsumerWidget {
   const FavouriteScreen({super.key});
