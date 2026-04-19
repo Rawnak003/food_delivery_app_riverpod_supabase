@@ -6,7 +6,7 @@ import 'package:iconsax/iconsax.dart';
 import '../../../core/constants/app_colors.dart';
 import '../cart/cart_screen.dart';
 import '../favourite/favourite_screen.dart';
-import '../home/home_screen.dart';
+import '../home/screens/home_screen.dart';
 import '../profile/profile_screen.dart';
 
 class ParentScreen extends StatefulWidget {

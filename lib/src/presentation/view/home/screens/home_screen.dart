@@ -9,7 +9,8 @@ import 'package:food_delivery_supabase_riverpod/src/presentation/view/home/widge
 import 'package:food_delivery_supabase_riverpod/src/presentation/widgets/app_loader.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'widgets/custom_product_card.dart';
+import '../../../../core/route/route_name.dart';
+import '../widgets/custom_product_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -105,7 +106,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: textTheme.titleLarge(fontWeight: FontWeight.bold),
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushNamed(context, RouteNames.allProductScreen);
+                      },
                       child: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         spacing: 4.w,

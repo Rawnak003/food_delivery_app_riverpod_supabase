@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food_delivery_supabase_riverpod/src/data/shared_pref_data.dart';
 import 'package:food_delivery_supabase_riverpod/src/presentation/widgets/primary_button.dart';
@@ -7,28 +8,29 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/route/route_name.dart';
 import '../../../core/theme/app_text_style.dart';
 import '../../../models/on_bording_model.dart';
+import '../../../view_models/onboarding_provider.dart';
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final PageController _pageController = PageController();
-  int currentIndex = 0;
 
   void _onPageChanged(int index) {
-    setState(() {
-      currentIndex = index;
-    });
+    ref.read(onboardingProvider.notifier).setPage(index);
   }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = AppTextStyle.auto(context);
     final size = MediaQuery.of(context).size;
+
+    final currentIndex = ref.watch(onboardingProvider);
+    final notifier = ref.read(onboardingProvider.notifier);
 
     return Scaffold(
       body: Stack(
@@ -155,8 +157,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       onTap: () async {
                         if (currentIndex == data.length - 1) {
                           await SharedPreferenceData.setOnboardingSeen();
-                          Navigator.pushNamedAndRemoveUntil(context, RouteNames.loginScreen, (predicate) => false);
+
+                          if (!mounted) return;
+
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            RouteNames.loginScreen,
+                                (route) => false,
+                          );
                         } else {
+                          notifier.next(data.length);
                           _pageController.nextPage(
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.easeInOut,
@@ -173,6 +183,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
                     TextButton(
                       onPressed: () {
+                        ref.read(onboardingProvider.notifier).setPage(data.length - 1);
                         _pageController.animateToPage(
                           data.length - 1,
                           duration: const Duration(milliseconds: 300),

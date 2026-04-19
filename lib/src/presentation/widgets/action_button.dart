@@ -5,10 +5,12 @@ import '../../core/constants/app_colors.dart';
 
 class ActionButton extends StatelessWidget {
   const ActionButton({
-    super.key, required this.icon, this.bgColor, this.onTap,
+    super.key, this.icon, this.bgColor, this.onTap, required this.isIcon, this.image,
   });
 
-  final String icon;
+  final bool isIcon;
+  final IconData? icon;
+  final String? image;
   final Color? bgColor;
   final VoidCallback? onTap;
 
@@ -24,7 +26,7 @@ class ActionButton extends StatelessWidget {
           color: bgColor ?? AppColors.greyColor,
           borderRadius: BorderRadius.circular(12.r),
         ),
-        child: Image.asset(icon,),
+        child: isIcon ? Icon(icon) : Image.asset(image ?? "",),
       ),
     );
   }

@@ -18,7 +18,7 @@ class HomeAppBar extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        ActionButton(icon: "assets/icon/dash.png"),
+        ActionButton(image: "assets/icon/dash.png", isIcon: false,),
         Row(
           mainAxisSize: MainAxisSize.min,
           spacing: 4.w,
@@ -40,7 +40,8 @@ class HomeAppBar extends StatelessWidget {
           ],
         ),
         ActionButton(
-          icon: "assets/profile.png",
+          isIcon: false,
+          image: "assets/profile.png",
           onTap: () {
             final supabase = Supabase.instance.client;
             supabase.auth.signOut();

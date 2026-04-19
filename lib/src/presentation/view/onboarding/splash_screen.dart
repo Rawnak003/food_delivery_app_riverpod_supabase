@@ -6,7 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../data/shared_pref_data.dart';
 import '../auth/login_screen.dart';
-import '../home/home_screen.dart';
+import '../home/screens/home_screen.dart';
 import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -34,13 +34,11 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 1800),
     );
 
-    // 🌟 Smooth fade
     _fadeAnimation = CurvedAnimation(
       parent: _controller,
       curve: Curves.easeOut,
     );
 
-    // 🔵 Smooth zoom-in (key improvement)
     _scaleAnimation = Tween<double>(
       begin: 0.7,
       end: 1.0,
@@ -51,7 +49,6 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    // ✍️ Text delay effect
     _textAnimation = CurvedAnimation(
       parent: _controller,
       curve: const Interval(0.4, 1.0, curve: Curves.easeOut),
