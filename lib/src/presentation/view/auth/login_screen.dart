@@ -6,7 +6,6 @@ import 'package:food_delivery_supabase_riverpod/src/core/utils/validators.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/route/route_name.dart';
-import '../../../core/services/auth/auth_service.dart';
 import '../../../core/theme/app_text_style.dart';
 import '../../../core/utils/app_toast.dart';
 import '../../../view_models/riverpods/login__provider.dart';
@@ -35,7 +34,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = AppTextStyle.auto(context);
-    final provider = ref.watch(loginProvider);
+    final state = ref.watch(loginProvider);
     final notifier = ref.read(loginProvider.notifier);
     return Scaffold(
       backgroundColor: Colors.white,
@@ -70,9 +69,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   label: 'Password',
                   controller: _passwordController,
                   action: TextInputAction.done,
-                  isObscure: provider.isPasswordObscure,
+                  isObscure: state.isPasswordObscure,
                   prefixIconPath: "assets/icon/lock.svg",
-                  suffixIconPath: provider.isPasswordObscure
+                  suffixIconPath: state.isPasswordObscure
                       ? "assets/icon/eye.svg"
                       : "assets/icon/eye-slash.svg",
                   suffixIconOnTap: notifier.togglePassword,
@@ -97,7 +96,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                 ),
                 SizedBox(height: 36.h),
-                provider.isLoading
+                state.isLoading
                     ? AppLoader.wave()
                     : PrimaryButton(
                         onTap: () async {

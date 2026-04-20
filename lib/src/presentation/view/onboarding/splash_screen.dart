@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:food_delivery_supabase_riverpod/src/core/constants/app_colors.dart';
 import 'package:food_delivery_supabase_riverpod/src/presentation/view/parent/parent_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../data/shared_pref_data.dart';
 import '../auth/login_screen.dart';
-import '../home/screens/home_screen.dart';
 import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -68,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen>
     final session = supabase.auth.currentSession;
 
     if (session != null) {
-      _goTo(const ParentScreen());
+      _goTo(ParentScreen());
       return;
     }
 
@@ -134,7 +132,7 @@ class _SplashScreenState extends State<SplashScreen>
                       borderRadius: BorderRadius.circular(24.r),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.15),
+                          color: Colors.black.withValues(alpha: 0.15),
                           blurRadius: 25,
                           offset: const Offset(0, 12),
                         )

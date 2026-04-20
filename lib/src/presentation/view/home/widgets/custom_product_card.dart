@@ -1,13 +1,15 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food_delivery_supabase_riverpod/src/core/theme/app_text_style.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/route/route_name.dart';
 import '../../../../models/product_model.dart';
+import '../../../../view_models/riverpods/product_detail_provider.dart';
 
-class CustomProductCard extends StatelessWidget {
+class CustomProductCard extends ConsumerWidget {
   const CustomProductCard({
     super.key,
     required this.product,
@@ -16,14 +18,17 @@ class CustomProductCard extends StatelessWidget {
   final FoodModel product;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = AppTextStyle.auto(context);
     return GestureDetector(
       onTap: () {
+        ref.read(productDetailProvider.notifier).setProduct(product);
+        if (ref.watch(productDetailProvider).product == null) {
+          return;
+        }
         Navigator.pushNamed(
           context,
           RouteNames.productDetailsScreen,
-          arguments: product,
         );
       },
       child: Card(

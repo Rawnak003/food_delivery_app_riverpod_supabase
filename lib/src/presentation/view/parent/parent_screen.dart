@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:food_delivery_supabase_riverpod/src/view_models/riverpods/parent_screen_provider.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../../../core/constants/app_colors.dart';
@@ -9,15 +11,9 @@ import '../favourite/favourite_screen.dart';
 import '../home/screens/home_screen.dart';
 import '../profile/profile_screen.dart';
 
-class ParentScreen extends StatefulWidget {
-  const ParentScreen({super.key});
+class ParentScreen extends ConsumerWidget {
+  ParentScreen({super.key});
 
-  @override
-  State<ParentScreen> createState() => _ParentScreenState();
-}
-
-class _ParentScreenState extends State<ParentScreen> {
-  int _currentIndex = 0;
   final List<Widget> screens = [
     HomeScreen(),
     FavouriteScreen(),
@@ -26,9 +22,12 @@ class _ParentScreenState extends State<ParentScreen> {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final currentIndex = ref.watch(parentScreenProvider);
+
     return Scaffold(
-      body: screens[_currentIndex],
+      body: screens[currentIndex],
       bottomNavigationBar: Stack(
         children: [
           Container(
@@ -39,16 +38,16 @@ class _ParentScreenState extends State<ParentScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildNavItem(Iconsax.home_15, "A", 0),
+                _buildNavItem(Iconsax.home_15, "A", 0, ref),
                 SizedBox(width: 10.w),
-                _buildNavItem(Iconsax.heart, "B", 1),
+                _buildNavItem(Iconsax.heart, "B", 1, ref),
                 SizedBox(width: 90.w),
-                _buildNavItem(CupertinoIcons.person, "C", 2),
+                _buildNavItem(CupertinoIcons.person, "C", 2, ref),
                 SizedBox(width: 10.w),
                 Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    _buildNavItem(Iconsax.shopping_cart, "D", 3),
+                    _buildNavItem(Iconsax.shopping_cart, "D", 3, ref),
                     Positioned(
                       top: 12,
                       right: -7,
@@ -85,12 +84,11 @@ class _ParentScreenState extends State<ParentScreen> {
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, int index) {
+  Widget _buildNavItem(IconData icon, String label, int index, WidgetRef ref) {
+    final currentIndex = ref.watch(parentScreenProvider);
     return InkWell(
       onTap: () {
-        setState(() {
-          _currentIndex = index;
-        });
+        ref.read(parentScreenProvider.notifier).setPage(index);
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -98,14 +96,14 @@ class _ParentScreenState extends State<ParentScreen> {
           Icon(
             icon,
             size: 24.w,
-            color: _currentIndex == index
+            color: currentIndex == index
                 ? AppColors.redColor
                 : Colors.grey.shade800,
           ),
           SizedBox(height: 2.h),
           CircleAvatar(
             radius: 3.r,
-            backgroundColor: _currentIndex == index
+            backgroundColor: currentIndex == index
                 ? AppColors.redColor
                 : Colors.white,
           ),

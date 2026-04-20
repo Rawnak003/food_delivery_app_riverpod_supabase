@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food_delivery_supabase_riverpod/src/core/constants/app_colors.dart';
 import 'package:food_delivery_supabase_riverpod/src/core/theme/app_text_style.dart';
-import 'package:food_delivery_supabase_riverpod/src/models/product_model.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:readmore/readmore.dart';
+import '../../../../view_models/riverpods/product_detail_provider.dart';
 import '../widgets/product_details_screen_app_bar.dart';
 
-class ProductDetailsScreen extends StatefulWidget {
-  const ProductDetailsScreen({super.key, required this.product});
-
-  final FoodModel product;
+class ProductDetailsScreen extends ConsumerWidget {
+  const ProductDetailsScreen({super.key});
 
   @override
-  State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
-}
-
-class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
-  int quantity = 1;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
     final textTheme = AppTextStyle.auto(context);
+
+    final state = ref.watch(productDetailProvider);
+    final notifier = ref.read(productDetailProvider.notifier);
+
+    final product = state.product;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -83,11 +81,28 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     SizedBox(height: 70.h),
                     Center(
                       child: Hero(
-                        tag: widget.product.id,
+                        tag: product!.id,
                         child: Image.network(
-                          widget.product.imageDetail,
+                          product.imageDetail,
                           fit: BoxFit.fill,
                           height: 300.h,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) {
+                              return child;
+                            }
+                            return Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.redColor,
+                                strokeWidth: 2,
+                                value:
+                                    loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                          (loadingProgress.expectedTotalBytes ??
+                                              1)
+                                    : null,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -106,9 +121,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           spacing: 8.w,
                           children: [
                             GestureDetector(
-                              onTap: () => setState(() {
-                                quantity = quantity > 1 ? quantity - 1 : 1;
-                              }),
+                              onTap: () {
+                                notifier.decrement();
+                              },
                               child: Icon(
                                 Iconsax.minus,
                                 size: 24.w,
@@ -116,16 +131,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ),
                             ),
                             Text(
-                              quantity.toString(),
+                              state.quantity.toString(),
                               style: textTheme.titleLarge(
                                 overrideColor: Colors.white,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                             GestureDetector(
-                              onTap: () => setState(() {
-                                quantity++;
-                              }),
+                              onTap: () {
+                                notifier.increment();
+                              },
                               child: Icon(
                                 Iconsax.add,
                                 size: 24.w,
@@ -148,14 +163,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    widget.product.name,
+                                    product.name,
                                     style: textTheme.titleLarge(
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                   SizedBox(height: 8.h),
                                   Text(
-                                    widget.product.specialItems,
+                                    product.specialItems,
                                     style: textTheme.titleSmall(
                                       overrideColor: Colors.black,
                                       fontWeight: FontWeight.w400,
@@ -175,7 +190,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       ),
                                     ),
                                     TextSpan(
-                                      text: widget.product.price.toString(),
+                                      text: product.price.toString(),
                                       style: textTheme.titleLarge(
                                         fontWeight: FontWeight.bold,
                                         overrideColor: Colors.black87,
@@ -193,17 +208,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               _buildInfo(
                                 textTheme,
                                 iconPath: 'assets/icon/star.png',
-                                text: widget.product.rate.toString(),
+                                text: product.rate.toString(),
                               ),
                               _buildInfo(
                                 textTheme,
                                 iconPath: 'assets/icon/fire.png',
-                                text: "${widget.product.kcal.toString()} kcal",
+                                text: "${product.kcal.toString()} kcal",
                               ),
                               _buildInfo(
                                 textTheme,
                                 iconPath: 'assets/icon/time.png',
-                                text: widget.product.time.toString(),
+                                text: product.time.toString(),
                               ),
                             ],
                           ),
@@ -220,7 +235,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ),
                           SizedBox(height: 12.h),
                           ReadMoreText(
-                            widget.product.description,
+                            product.description,
                             textAlign: TextAlign.justify,
                             style: textTheme.titleSmall(
                               overrideColor: Colors.black87,

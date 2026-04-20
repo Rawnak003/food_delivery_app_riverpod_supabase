@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food_delivery_supabase_riverpod/src/core/utils/validators.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/services/auth/auth_service.dart';
 import '../../../core/theme/app_text_style.dart';
 import '../../../core/utils/app_toast.dart';
 import '../../../view_models/riverpods/sign_up_provider.dart';
@@ -34,7 +33,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   Widget build(BuildContext context) {
     final textTheme = AppTextStyle.auto(context);
 
-    final provider = ref.watch(signUpProvider);
+    final state = ref.watch(signUpProvider);
     final notifier = ref.read(signUpProvider.notifier);
 
     return Scaffold(
@@ -70,16 +69,16 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   label: 'Password',
                   controller: _passwordController,
                   action: TextInputAction.done,
-                  isObscure: provider.isPasswordObscure,
+                  isObscure: state.isPasswordObscure,
                   prefixIconPath: "assets/icon/lock.svg",
-                  suffixIconPath: provider.isPasswordObscure
+                  suffixIconPath: state.isPasswordObscure
                       ? "assets/icon/eye.svg"
                       : "assets/icon/eye-slash.svg",
                   suffixIconOnTap: notifier.togglePassword,
                   validator: (value) => Validators.passwordValidator(value),
                 ),
                 SizedBox(height: 36.h),
-                provider.isLoading
+                state.isLoading
                     ? AppLoader.wave()
                     : PrimaryButton(
                         onTap: () async {
