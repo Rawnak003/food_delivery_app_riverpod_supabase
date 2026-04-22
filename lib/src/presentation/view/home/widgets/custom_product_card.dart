@@ -6,7 +6,9 @@ import 'package:food_delivery_supabase_riverpod/src/core/theme/app_text_style.da
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/route/route_name.dart';
+import '../../../../core/utils/app_toast.dart';
 import '../../../../models/product_model.dart';
+import '../../../../view_models/riverpods/favourite_provider.dart';
 import '../../../../view_models/riverpods/product_detail_provider.dart';
 
 class CustomProductCard extends ConsumerWidget {
@@ -121,7 +123,17 @@ class CustomProductCard extends ConsumerWidget {
               right: 8.w,
               top: 8.w,
               child: GestureDetector(
-                onTap: (){},
+                onTap: () async {
+                  final notifier = ref.read(favouriteProvider.notifier);
+
+                  final isAdded = await notifier.toggle(product.id);
+
+                  if (isAdded) {
+                    AppToast.showToast("Added to favorites");
+                  } else {
+                    AppToast.showToast("Removed from favorites");
+                  }
+                },
                 child: CircleAvatar(
                   radius: 15.r,
                   backgroundColor: Colors.red.shade50,

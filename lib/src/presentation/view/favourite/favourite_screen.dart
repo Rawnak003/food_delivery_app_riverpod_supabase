@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:food_delivery_supabase_riverpod/src/core/constants/app_colors.dart';
-import 'package:food_delivery_supabase_riverpod/src/models/product_model.dart';
 import 'package:food_delivery_supabase_riverpod/src/presentation/view/home/widgets/custom_product_card.dart';
-import 'package:food_delivery_supabase_riverpod/src/presentation/widgets/app_loader.dart';
+import 'package:food_delivery_supabase_riverpod/src/view_models/riverpods/all_product_provider.dart';
+import 'package:food_delivery_supabase_riverpod/src/view_models/riverpods/parent_screen_provider.dart';
 
 import '../../../core/theme/app_text_style.dart';
 import '../../../view_models/riverpods/favourite_provider.dart';
@@ -25,7 +23,7 @@ class FavouriteScreen extends ConsumerWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => ref.read(parentScreenProvider.notifier).setPage(0),
         ),
         title: Text(
           'Favorites',
@@ -55,14 +53,16 @@ class FavouriteScreen extends ConsumerWidget {
             );
           }
 
-          // final favProducts = productList
-          //     .where((p) => favIds.contains(p.id))
-          //     .toList();
+          final productList = ref.watch(allProductProvider).products;
+
+          final favProducts = productList
+              .where((p) => favIds.contains(p.id))
+              .toList();
 
           return Padding(
             padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
             child: GridView.builder(
-              itemCount: 1,
+              itemCount: favProducts.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: .64,
@@ -70,9 +70,8 @@ class FavouriteScreen extends ConsumerWidget {
                 mainAxisSpacing: 10,
               ),
               itemBuilder: (context, index) {
-                // final fav = favProducts[index];
-                return SizedBox();
-                // return CustomProductCard(product: fav);
+                final fav = favProducts[index];
+                return CustomProductCard(product: fav);
               },
             ),
           );

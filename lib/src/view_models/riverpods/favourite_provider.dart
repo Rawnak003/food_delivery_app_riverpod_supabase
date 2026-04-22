@@ -22,40 +22,30 @@ class FavouriteNotifier extends AsyncNotifier<List<int>> {
 
   @override
   Future<List<int>> build() async {
-    ref.listen(authStateProvider, (_, __) {
-      ref.invalidateSelf();
-    });
-
     final data = await repo.getFavourites();
-
-    _listenRealtime();
-
     return data;
   }
 
-  void _listenRealtime() {
-    final stream = repo.watchFavourites();
-
-    stream.listen((data) {
-      state = AsyncData(data);
-    });
+  Future<void> refresh() async {
+    state = const AsyncLoading();
+    state = AsyncData(await repo.getFavourites());
   }
 
-  Future<void> toggle(int id) async {
+  Future<bool> toggle(int id) async {
     final current = state.value ?? [];
-
     final isFav = current.contains(id);
 
-    if (isFav) {
-      state = AsyncData(current.where((e) => e != id).toList());
-      await repo.remove(id);
-    } else {
-      state = AsyncData([...current, id]);
-      await repo.add(id);
+    try {
+      if (isFav) {
+        await repo.remove(id);
+      } else {
+        await repo.add(id);
+      }
+      await refresh();
+      return !isFav;
+    } catch (e) {
+      state = AsyncError(e, StackTrace.current);
+      return isFav;
     }
-  }
-
-  bool isFavourite(int id) {
-    return state.value?.contains(id) ?? false;
   }
 }
