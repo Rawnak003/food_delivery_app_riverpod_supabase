@@ -100,7 +100,7 @@ class ProductDetailsScreen extends ConsumerWidget {
                     SizedBox(height: 70.h),
                     Center(
                       child: Hero(
-                        tag: product!.id,
+                        tag: product.id,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16.r),
                           child: Stack(

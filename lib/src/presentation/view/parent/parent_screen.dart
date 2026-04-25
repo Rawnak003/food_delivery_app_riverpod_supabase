@@ -6,6 +6,7 @@ import 'package:food_delivery_supabase_riverpod/src/view_models/riverpods/parent
 import 'package:iconsax/iconsax.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../view_models/riverpods/cart_provider.dart';
 import '../cart/cart_screen.dart';
 import '../favourite/favourite_screen.dart';
 import '../home/screens/home_screen.dart';
@@ -51,12 +52,17 @@ class ParentScreen extends ConsumerWidget {
                     Positioned(
                       top: 12,
                       right: -7,
-                      child: CircleAvatar(
-                        radius: 10.r,
-                        backgroundColor: AppColors.redColor,
-                        child: Text(
-                          "0",
-                          style: TextStyle(fontSize: 12.sp, color: Colors.white),
+                      child: GestureDetector(
+                        onTap: () {
+                          ref.read(parentScreenProvider.notifier).setPage(3);
+                        },
+                        child: CircleAvatar(
+                          radius: 10.r,
+                          backgroundColor: AppColors.redColor,
+                          child: Text(
+                            ref.watch(cartProvider).items.length.toString(),
+                            style: TextStyle(fontSize: 12.sp, color: Colors.white),
+                          ),
                         ),
                       ),
                     ),

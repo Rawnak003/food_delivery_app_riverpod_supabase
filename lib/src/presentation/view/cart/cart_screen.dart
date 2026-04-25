@@ -131,7 +131,7 @@ class CartScreen extends ConsumerWidget {
 
                     Row(
                       children: [
-                        _qtyButton(icon: Iconsax.trash, onTap: onRemove),
+                        _qtyButton(icon: item.quantity > 1 ? Icons.remove : Iconsax.trash, onTap: item.quantity > 1 ? onDecrease : onRemove),
 
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 6.w),

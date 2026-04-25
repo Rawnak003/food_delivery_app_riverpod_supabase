@@ -19,8 +19,15 @@ class CartRepository {
     return FoodModel.fromJson(res);
   }
 
-  // ✅ Add or increase by 1
-  Future<void> addToCart(String userId, int foodId) async {
+  Future<void> setQuantity(String userId, int foodId, int quantity) async {
+    await _client
+        .from('cart')
+        .update({'quantity': quantity})
+        .eq('user_id', userId)
+        .eq('product_id', foodId);
+  }
+
+  Future<void> addToCart(String userId, int foodId, int quantity) async {
     print('\n\nRepository addToCart called. userId: $userId, foodId: $foodId\n\n');
 
     try {
@@ -42,14 +49,14 @@ class CartRepository {
         await _client.from('cart').insert({
           'user_id': userId,
           'product_id': foodId,
-          'quantity': 1,
+          'quantity': quantity,
           'created_at': DateTime.now().toIso8601String(),
         });
         print('\n\nInserted new row\n\n');
       }
     } catch (e) {
       print('\n\nRepository ERROR: $e\n\n');
-      rethrow; // ← important! lets the notifier catch it too
+      rethrow;
     }
   }
 
