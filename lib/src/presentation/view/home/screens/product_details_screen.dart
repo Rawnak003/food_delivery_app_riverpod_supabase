@@ -1,12 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food_delivery_supabase_riverpod/src/core/constants/app_colors.dart';
 import 'package:food_delivery_supabase_riverpod/src/core/theme/app_text_style.dart';
+import 'package:food_delivery_supabase_riverpod/src/core/utils/app_toast.dart';
+import 'package:food_delivery_supabase_riverpod/src/presentation/widgets/secondary_app_bar.dart';
+import 'package:food_delivery_supabase_riverpod/src/view_models/riverpods/cart_provider.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:readmore/readmore.dart';
 import '../../../../view_models/riverpods/product_detail_provider.dart';
-import '../widgets/product_details_screen_app_bar.dart';
 
 class ProductDetailsScreen extends ConsumerWidget {
   const ProductDetailsScreen({super.key});
@@ -21,6 +24,15 @@ class ProductDetailsScreen extends ConsumerWidget {
 
     final product = state.product;
 
+    if (product == null) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(
+          child: CircularProgressIndicator(color: AppColors.redColor),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -29,7 +41,13 @@ class ProductDetailsScreen extends ConsumerWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
         label: MaterialButton(
-          onPressed: () {},
+          onPressed: () async {
+            await ref.read(cartProvider.notifier).addItem(
+              product,
+              quantity: state.quantity,
+            );
+            AppToast.showToast('Added to cart');
+          },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.r),
           ),
@@ -48,16 +66,17 @@ class ProductDetailsScreen extends ConsumerWidget {
       body: Stack(
         alignment: AlignmentGeometry.bottomCenter,
         children: [
-          Container(
-            height: size.height,
-            width: size.width,
-            color: AppColors.imageBackground1,
-            child: Image.asset(
-              "assets/food pattern.png",
-              color: AppColors.imageBackground2,
-              repeat: ImageRepeat.repeatY,
+          Positioned.fill(
+            child: Container(
+              color: AppColors.imageBackground1,
+              child: Image.asset(
+                "assets/food pattern.png",
+                color: AppColors.imageBackground2,
+                repeat: ImageRepeat.repeatY,
+              ),
             ),
           ),
+
           Container(
             height: size.height * 0.75,
             decoration: BoxDecoration(
@@ -82,27 +101,24 @@ class ProductDetailsScreen extends ConsumerWidget {
                     Center(
                       child: Hero(
                         tag: product!.id,
-                        child: Image.network(
-                          product.imageDetail,
-                          fit: BoxFit.fill,
-                          height: 300.h,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) {
-                              return child;
-                            }
-                            return Center(
-                              child: CircularProgressIndicator(
-                                color: AppColors.redColor,
-                                strokeWidth: 2,
-                                value:
-                                    loadingProgress.expectedTotalBytes != null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                          (loadingProgress.expectedTotalBytes ??
-                                              1)
-                                    : null,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16.r),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              CachedNetworkImage(
+                                imageUrl: product.imageDetail,
+                                height: 300.h,
+                                fit: BoxFit.cover,
+                                fadeInDuration: const Duration(milliseconds: 300),
+
+                                placeholder: (_, __) => const SizedBox(),
+
+                                errorWidget: (_, __, ___) =>
+                                const Icon(Icons.error, color: Colors.red),
                               ),
-                            );
-                          },
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -264,11 +280,12 @@ class ProductDetailsScreen extends ConsumerWidget {
             ),
           ),
 
-          Positioned(
-            top: 54.h,
-            left: 4.w,
-            right: 4.w,
-            child: ProductDetailsScreenAppBar(),
+          Align(
+            alignment: AlignmentGeometry.topCenter,
+            child: SafeArea(child: SecondaryAppBar(hasMore: true, title: '', onTapBack: () {
+              Navigator.pop(context);
+              notifier.reset();
+            },)),
           ),
         ],
       ),

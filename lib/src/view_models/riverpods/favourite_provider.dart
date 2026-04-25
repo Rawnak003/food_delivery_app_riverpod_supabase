@@ -22,8 +22,8 @@ class FavouriteNotifier extends AsyncNotifier<List<int>> {
 
   @override
   Future<List<int>> build() async {
-    final data = await repo.getFavourites();
-    return data;
+    ref.watch(authStateProvider);
+    return await repo.getFavourites();
   }
 
   Future<void> refresh() async {
@@ -47,5 +47,10 @@ class FavouriteNotifier extends AsyncNotifier<List<int>> {
       state = AsyncError(e, StackTrace.current);
       return isFav;
     }
+  }
+
+  bool isFavourite(int id) {
+    final current = state.value ?? [];
+    return current.contains(id);
   }
 }

@@ -24,6 +24,10 @@ class ProductDetailProvider extends Notifier<ProductDetailState> {
     );
   }
 
+  void reset() {
+    state = ProductDetailState();
+  }
+
   void setProduct(FoodModel product) {
     state = state.copyWith(product: product);
   }

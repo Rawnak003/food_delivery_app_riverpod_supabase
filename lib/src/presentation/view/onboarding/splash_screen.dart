@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food_delivery_supabase_riverpod/src/presentation/view/parent/parent_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/constants/app_colors.dart';
 import '../../../data/shared_pref_data.dart';
+import '../../widgets/app_loader.dart';
 import '../auth/login_screen.dart';
 import 'onboarding_screen.dart';
 
@@ -178,10 +180,7 @@ class _SplashScreenState extends State<SplashScreen>
 
               FadeTransition(
                 opacity: _fadeAnimation,
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 4.w,
-                ),
+                child: AppLoader.wave(color: Colors.white),
               ),
             ],
           ),
